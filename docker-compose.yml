@@ -1,0 +1,65 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: openwebui
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: openwebui
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - internal
+
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    restart: unless-stopped
+
+    environment:
+      DATABASE_URL: postgresql://openwebui:secretpassword@postgres:5432/openwebui
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "3000:8080"
+
+    volumes:
+      - openwebui_data:/app/backend/data
+
+    networks:
+      - internal
+
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+    depends_on:
+      - openwebui
+
+    networks:
+      - internal
+
+
+volumes:
+  postgres_data:
+  openwebui_data:
+
+
+networks:
+  internal:
