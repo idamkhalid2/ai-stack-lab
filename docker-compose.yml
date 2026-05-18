@@ -67,6 +67,40 @@ services:
       - backend
 
 
+  qdrant:
+    image: qdrant/qdrant
+    container_name: ai-qdrant
+    restart: unless-stopped
+
+    ports:
+      - "6333:6333"
+
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+
+    networks:
+      - backend
+
+
+  n8n:
+    image: n8nio/n8n
+    container_name: ai-n8n
+    restart: unless-stopped
+
+    ports:
+      - "5678:5678"
+
+    environment:
+      - TZ=Asia/Jakarta
+      - N8N_SECURE_COOKIE=false
+    volumes:
+      - ./data/n8n:/home/node/.n8n
+
+    networks:
+      - backend
+      - frontend
+
+
   nginx:
     image: nginx:latest
     container_name: ai-nginx
