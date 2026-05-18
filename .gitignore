@@ -1,3 +1,10 @@
 .env
 actions-runner/
 *.tar.gz
+
+data/
+models/
+*.log
+
+__pycache__/
+node_modules/
