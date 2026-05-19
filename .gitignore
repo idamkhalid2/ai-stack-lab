@@ -1,30 +1,42 @@
 # Secrets
 .env
-vmware-exporter/config.yml
+*.env
 
-# CI/CD
+# GitHub Runner
 actions-runner/
 
 # Archives
 *.tar.gz
+*.zip
 
-# Data / Models
+# Runtime data
 data/
 models/
-grafana-data/
-postgres-data/
-qdrant_storage/
-ollama/
 
 # Logs
 *.log
+logs/
 
 # Python
 __pycache__/
+*.pyc
 
-# Node
+# NodeJS
 node_modules/
 
-# Linux / Editor
-*.swp
+# Monitoring data
+grafana/data/
+prometheus/data/
+loki/data/
+
+# Databases
+*.db
+*.sqlite
+
+# VMware exporter secrets
+vmware-exporter/config.yml
+vmware-exporter/.env
+
+# OS junk
 .DS_Store
+Thumbs.db
