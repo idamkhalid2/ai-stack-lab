@@ -18,6 +18,7 @@ jobs:
 
       - name: Deploy Stack
         run: |
-          cd /root/ai-stack
+          cd /opt/ai-stack
           git pull
+          docker compose pull
           docker compose up -d
