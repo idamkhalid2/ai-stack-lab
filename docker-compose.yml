@@ -156,6 +156,133 @@ services:
     networks:
       - frontend
 
+  prometheus:
+    image: prom/prometheus
+    container_name: ai-prometheus
+    restart: unless-stopped
+
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+    networks:
+      - backend
+
+
+  grafana:
+    image: grafana/grafana
+    container_name: ai-grafana
+    restart: unless-stopped
+
+    ports:
+      - "3010:3000"
+
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+
+    networks:
+      - backend
+      - frontend
+
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: ai-node-exporter
+    restart: unless-stopped
+
+    ports:
+      - "9100:9100"
+
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+
+    networks:
+      - backend
+
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: ai-cadvisor
+    restart: unless-stopped
+
+    ports:
+      - "8081:8080"
+
+    privileged: true
+
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+
+    devices:
+      - /dev/kmsg
+
+    networks:
+      - backend
+
+
+  loki:
+    image: grafana/loki:latest
+    container_name: ai-loki
+    restart: unless-stopped
+
+    ports:
+      - "3100:3100"
+
+    command: -config.file=/etc/loki/local-config.yaml
+
+    volumes:
+      - ./logging/loki/loki-config.yml:/etc/loki/local-config.yaml
+      - ./data/loki:/loki
+
+    networks:
+      - backend
+
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: ai-promtail
+    restart: unless-stopped
+
+    volumes:
+      - ./logging/promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    command: -config.file=/etc/promtail/config.yml
+
+    networks:
+      - backend
+
+  vmware-exporter:
+    image: pryorda/vmware_exporter
+    container_name: ai-vmware-exporter
+    restart: unless-stopped
+
+    ports:
+      - "9272:9272"
+
+    volumes:
+      - ./vmware-exporter/config.yml:/etc/vmware_exporter/config.yml
+
+    command:
+      - "-c"
+      - "/etc/vmware_exporter/config.yml"
+
+    networks:
+      - backend
 
 networks:
   frontend:

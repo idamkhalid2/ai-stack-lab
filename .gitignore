@@ -1,10 +1,30 @@
+# Secrets
 .env
+vmware-exporter/config.yml
+
+# CI/CD
 actions-runner/
+
+# Archives
 *.tar.gz
 
+# Data / Models
 data/
 models/
+grafana-data/
+postgres-data/
+qdrant_storage/
+ollama/
+
+# Logs
 *.log
 
+# Python
 __pycache__/
+
+# Node
 node_modules/
+
+# Linux / Editor
+*.swp
+.DS_Store
